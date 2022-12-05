@@ -1,41 +1,207 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.main-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.menu {
+  background-color: #2a36b8;
+}
+.menu-header {
+  width: 270px;
+  height: 60px;
+  background: #000c8e;
+  box-shadow: 4px 7px 4px rgba(0, 0, 0, 0.12);
+}
+
+.menu-item {
+  margin: 19.25px 0px 0px 43.25px;
+  display: flex;
+  cursor: pointer;
+}
+
+.menu-item > img {
+  width: 20px;
+  height: 20px;
+}
+
+.menu-item > div {
+  margin-left: 16px;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  /* identical to box height */
+
+  color: #ffffff;
+}
+
+.content-header {
+  background: #f8f8f8;
+  border: 1px solid rgba(0, 0, 0, 0.27);
+  box-shadow: 17px 8px 6px rgba(0, 0, 0, 0.1);
+  height: 60px;
+}
+
+.content-body {
+  padding: 48px 29px;
+}
+
+.ranking-card {
+  background: #eeefff;
+  box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 0px 0px 10px 10px;
+}
+
+.ranking-card-header {
+  background: #000c8e;
+  box-shadow: -2px 5px 4px -2px rgba(0, 0, 0, 0.05);
+  border-radius: 10px 10px 0px 0px;
+  padding: 15px 37px;
+
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  /* identical to box height */
+
+  color: #ffffff;
+}
+
+.ranking-card-body {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  padding: 42px 83px 23px 49px;
+  justify-content: space-between;
+}
+
+.score-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.score-detail-wrapper {
+  margin-left: 9px;
+}
+
+.score-title {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  /* identical to box height */
+
+  color: rgba(42, 54, 184, 0.79);
+}
+
+.score-detail {
+  display: flex;
+  flex-direction: row;
+}
+
+.score {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  /* identical to box height */
+
+  color: #000000;
+}
+
+.score-status {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  /* identical to box height */
+
+  color: #eb55c1;
+
+  margin-left: 9px;
+}
+
+.ranking-info {
+  width: 380px;
+  left: 942px;
+  top: 190px;
+  height: fit-content;
+
+  background: #d6d8ff;
+  border-radius: 6px;
+  margin-left: 190px;
+  padding: 19px 15px 14px 22px;
+}
+
+.ranking-info-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ranking-info-header > div {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  /* identical to box height */
+
+  color: #000c8e;
+}
+
+.ranking-info-detail {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: justify;
+  letter-spacing: 0.015em;
+
+  color: #414141;
+}
+
+.btn-ranking {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 9px;
+  line-height: 14px;
+  /* identical to box height */
+
   text-align: center;
+  letter-spacing: 0.015em;
+
+  background: #000c8e;
+  border-radius: 3px;
+  color: #ffffff;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.coin-card-list {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 48px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.coin-card {
+  width: 180px;
+  left: 583px;
+  top: 419px;
+
+  background: #d9d9d9;
+  border-radius: 16px;
+  padding: 21px 24px 
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
