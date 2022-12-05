@@ -11,7 +11,7 @@ import coin1 from "./assets/coin1.png";
 import coin2 from "./assets/coin2.png";
 import coin3 from "./assets/coin3.png";
 import coin4 from "./assets/coin4.png";
-import arrow from "./assets/arrow-2.png";
+import arrow from "./assets/arrow-2.svg";
 import up from "./assets/Yes.png";
 import down from "./assets/No.png";
 
@@ -43,6 +43,30 @@ const listInfoCoin = [
     value: 6547.79,
     rate: 9.5,
     raise: true,
+  },
+];
+
+const activities = [
+  {
+    src: coin1,
+    name: "Bitcoin",
+    time: "10:45:16 AM",
+    value: "+1545,00",
+    status: "Completed",
+  },
+  {
+    src: coin3,
+    name: "Ethereum",
+    time: "09:15:31 AM",
+    value: "+5649,00",
+    status: "Painding",
+  },
+  {
+    src: coin2,
+    name: "LTC",
+    time: "09:01:12 AM",
+    value: "+4547,00",
+    status: "Completed",
   },
 ];
 function App() {
@@ -132,28 +156,54 @@ function App() {
             <div className="coin-card-list">
               {listInfoCoin.map((item) => (
                 <div className="coin-card">
-                  <img src={item.src} alt="coin" />
+                  <img src={item.src} alt="coin" className="coin-img" />
                   <div>
                     {item.from}
-                    <img src={arrow} alt="arrow" />
+                    <img src={arrow} alt="arrow" className="img-arrow" />
                     USD
                   </div>
-                  {item.value}
+                  <div className="coin-value">{item.value}</div>
                   {item.raise === true ? (
-                    <div>
-                      <img src={up} alt="up" />
+                    <div style={{ color: "#00DEA3" }}>
+                      <img src={up} alt="up" style={{ marginRight: 4 }} />
                       {item.rate}%
                     </div>
                   ) : (
-                    <div>
-                      <img src={down} alt="up" />
+                    <div style={{ color: "#F23985" }}>
+                      <img src={down} alt="up" style={{ marginRight: 4 }} />
                       {item.rate}%
                     </div>
                   )}
                 </div>
               ))}
             </div>
+            <div className="recent-wrapper">
+              <div className="recent-wrapper-title">Recent Activities</div>
+              <table>
+                <tr />
+                {activities.map((item) => (
+                  <tr className="recent-row">
+                    <td className="recent-img">
+                      <img src={item.src} alt="coin" />
+                    </td>
+                    <td className="recent-name">{item.name}</td>
+                    <td className="recent-time">{item.time}</td>
+                    <td className="recent-value">{item.value}</td>
+                    <td
+                      className="recent-status"
+                      style={{
+                        color:
+                          item.status === "Completed" ? "#00DEA3" : "#4318FF ",
+                      }}
+                    >
+                      {item.status}
+                    </td>
+                  </tr>
+                ))}
+              </table>
+            </div>
           </div>
+          <div className="footer">© Dashboard, All rights reserved</div>
         </div>
       </div>
     </>
