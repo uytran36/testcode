@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Space, Form, Input, message, Upload } from "antd";
+import { Button, Space, Form, Input, message, Upload, Switch } from "antd";
 import {
   MinusCircleOutlined,
   PlusOutlined,
@@ -13,11 +13,16 @@ const CustomAvatar = (props) => {
   return <img src={props.value} />;
 };
 
+const CustomSwitch = (props) => {
+  return <Switch checkedChildren="Up" unCheckedChildren="Down" />;
+};
+
 const Admin = () => {
   const [form] = Form.useForm();
   const routesWatch = Form.useWatch("routes", form);
   const coinListWatch = Form.useWatch("coinList", form);
   const recentActivitiesWatch = Form.useWatch("recentActivities", form);
+  const creditScoreWatch = Form.useWatch("creditScore", form);
 
   const propsUpload = {
     name: "file",
@@ -56,6 +61,7 @@ const Admin = () => {
       body: JSON.stringify(values),
     });
     console.log(res);
+    message.success(`Update successfully`);
   };
 
   return (
@@ -158,7 +164,7 @@ const Admin = () => {
         <Form.List name="creditScore">
           {(fields, { add, remove }, { errors }) => (
             <>
-              {fields.map(({ key, name, ...restField }) => (
+              {fields.map(({ key, name, ...restField }, index) => (
                 <Space
                   key={key}
                   style={{
@@ -171,8 +177,36 @@ const Admin = () => {
                     <Input placeholder="Name" />
                   </Form.Item>
                   <Form.Item {...restField} name={[name, "icon"]}>
-                    <Input placeholder="Icon" />
+                    <CustomAvatar />
                   </Form.Item>
+                  <Upload
+                    {...propsUpload}
+                    onChange={(info) => {
+                      if (info.file.status !== "uploading") {
+                        console.log(info.file, info.fileList);
+                      }
+                      if (info.file.status === "done") {
+                        form.setFieldsValue({
+                          creditScore: creditScoreWatch.map((item, idx) => {
+                            return {
+                              ...item,
+                              icon:
+                                idx === index
+                                  ? info.file.response.data.display_url
+                                  : item.icon,
+                            };
+                          }),
+                        });
+                        message.success(
+                          `${info.file.name} file uploaded successfully`
+                        );
+                      } else if (info.file.status === "error") {
+                        message.error(`${info.file.name} file upload failed.`);
+                      }
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                  </Upload>
                   <Form.Item {...restField} name={[name, "score"]}>
                     <Input placeholder="Score" />
                   </Form.Item>
@@ -255,8 +289,12 @@ const Admin = () => {
                   <Form.Item {...restField} name={[name, "rate"]}>
                     <Input placeholder="Rate" />
                   </Form.Item>
-                  <Form.Item {...restField} name={[name, "raise"]}>
-                    <Input placeholder="Raising" />
+                  <Form.Item
+                    {...restField}
+                    valuePropName="checked"
+                    name={[name, "raise"]}
+                  >
+                    <Switch checkedChildren="Up" unCheckedChildren="Down" />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />
                 </Space>
@@ -311,15 +349,17 @@ const Admin = () => {
                       }
                       if (info.file.status === "done") {
                         form.setFieldsValue({
-                          recentActivities: recentActivitiesWatch.map((item, idx) => {
-                            return {
-                              ...item,
-                              icon:
-                                idx === index
-                                  ? info.file.response.data.display_url
-                                  : item.icon,
-                            };
-                          }),
+                          recentActivities: recentActivitiesWatch.map(
+                            (item, idx) => {
+                              return {
+                                ...item,
+                                icon:
+                                  idx === index
+                                    ? info.file.response.data.display_url
+                                    : item.icon,
+                              };
+                            }
+                          ),
                         });
                         message.success(
                           `${info.file.name} file uploaded successfully`

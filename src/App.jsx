@@ -112,7 +112,10 @@ function App() {
                           className="score-item"
                           style={{ paddingBottom: idx === 0 ? 42 : 0 }}
                         >
-                          <img src={score} />
+                          <img
+                            src={item?.icon}
+                            style={{ width: 14, height: 14 }}
+                          />
                           <div className="score-detail-wrapper">
                             <div className="score-title">{item?.name}</div>
                             <div className="score-detail">
@@ -134,7 +137,10 @@ function App() {
                           className="score-item"
                           style={{ paddingBottom: idx === 0 ? 42 : 0 }}
                         >
-                          <img src={score} />
+                          <img
+                            src={item?.icon}
+                            style={{ width: 14, height: 14 }}
+                          />
                           <div className="score-detail-wrapper">
                             <div className="score-title">{item?.name}</div>
                             <div className="score-detail">
@@ -161,9 +167,9 @@ function App() {
               </div>
             </div>
             <div className="coin-card-list">
-              {listInfoCoin.map((item) => (
+              {data?.coinList?.map((item) => (
                 <div className="coin-card">
-                  <img src={item.src} alt="coin" className="coin-img" />
+                  <img src={item.icon} alt="coin" className="coin-img" />
                   <div>
                     {item?.from}
                     <img src={arrow} alt="arrow" className="img-arrow" />
