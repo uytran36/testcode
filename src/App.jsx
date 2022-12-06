@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import dash from "./assets/dash.svg";
 import ref from "./assets/ref.svg";
@@ -69,87 +69,94 @@ const activities = [
     status: "Completed",
   },
 ];
+
 function App() {
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetch(`${import.meta.env.VITE_API_MOCK}/routes`);
+      const res = await result.json();
+      setData(res?.data?.[0]);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <>
       <div className="main-wrapper">
         <div className="menu">
           <div className="menu-header" />
-          <div className="menu-item">
-            <img src={dash} alt="dash_img" />
-            <div>Dashboard</div>
-          </div>
-          <div className="menu-item">
-            <img src={ref} alt="ref_img" />
-            <div>Refer & Earn</div>
-          </div>
-          <div className="menu-item">
-            <img src={rev} alt="rev_img" />
-            <div>Revenue</div>
-          </div>
-          <div className="menu-item">
-            <img src={acc} alt="acc_img" />
-            <div>My Account</div>
-          </div>
-          <div className="menu-item">
-            <img src={app} alt="app_img" />
-            <div>My Applications</div>
-          </div>
+          {data?.routes?.map((item) => (
+            <div className="menu-item">
+              <img src={item?.icon} alt="dash_img" />
+              <div>{item?.name}</div>
+            </div>
+          ))}
         </div>
         <div className="content">
           <div className="content-header" />
           <div className="content-body">
             <div className="ranking-card">
-              <div className="ranking-card-header">Credit Score Ranking</div>
+              <div className="ranking-card-header">
+                {data?.creditScoreRankingTitle}
+              </div>
               <div className="ranking-card-body">
                 <div className="score-wrapper">
                   <div>
-                    {[0, 1].map((v) => (
-                      <div
-                        className="score-item"
-                        style={{ paddingBottom: v === 0 ? 42 : 0 }}
-                      >
-                        <img src={score} />
-                        <div className="score-detail-wrapper">
-                          <div className="score-title">Your Credit Score</div>
-                          <div className="score-detail">
-                            <div className="score">942</div>
-                            <div className="score-status">Good</div>
+                    {data?.creditScore
+                      ?.slice(0, data?.creditScore?.length / 2)
+                      .map((item, idx) => (
+                        <div
+                          className="score-item"
+                          style={{ paddingBottom: idx === 0 ? 42 : 0 }}
+                        >
+                          <img src={score} />
+                          <div className="score-detail-wrapper">
+                            <div className="score-title">{item?.name}</div>
+                            <div className="score-detail">
+                              <div className="score">{item?.score}</div>
+                              <div className="score-status">{item?.status}</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                   <div>
-                    {[0, 1].map((v) => (
-                      <div
-                        className="score-item"
-                        style={{ paddingBottom: v === 0 ? 42 : 0 }}
-                      >
-                        <img src={score} />
-                        <div className="score-detail-wrapper">
-                          <div className="score-title">Your Credit Score</div>
-                          <div className="score-detail">
-                            <div className="score">942</div>
-                            <div className="score-status">Good</div>
+                    {data?.creditScore
+                      ?.slice(
+                        data?.creditScore?.length / 2,
+                        data?.creditScore?.length
+                      )
+                      .map((item, idx) => (
+                        <div
+                          className="score-item"
+                          style={{ paddingBottom: idx === 0 ? 42 : 0 }}
+                        >
+                          <img src={score} />
+                          <div className="score-detail-wrapper">
+                            <div className="score-title">{item?.name}</div>
+                            <div className="score-detail">
+                              <div className="score">{item?.score}</div>
+                              <div className="score-status">{item?.status}</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
                 <div className="ranking-info">
                   <div className="ranking-info-header">
-                    <div>Credit Score Ranking</div>
+                    <div>{data?.creditScoreRanking}</div>
                     <img src={ranking} />
                   </div>
                   <div className="ranking-info-detail">
-                    In publishing and graphic design, Lorem ipsum is a
-                    placeholder text commonly used to demonstrate the visual
-                    form of a document or a typeface without relying on
-                    meaningful content.
+                    {data?.creditScoreRankingText}
                   </div>
-                  <button className="btn-ranking">See More...</button>
+                  <button className="btn-ranking" style={{ marginTop: 8 }}>
+                    {data?.creditScoreRankingBtn}
+                  </button>
                 </div>
               </div>
             </div>
@@ -158,12 +165,12 @@ function App() {
                 <div className="coin-card">
                   <img src={item.src} alt="coin" className="coin-img" />
                   <div>
-                    {item.from}
+                    {item?.from}
                     <img src={arrow} alt="arrow" className="img-arrow" />
-                    USD
+                    {item?.to}
                   </div>
-                  <div className="coin-value">{item.value}</div>
-                  {item.raise === true ? (
+                  <div className="coin-value">{item?.value}</div>
+                  {item?.raise === true ? (
                     <div style={{ color: "#00DEA3" }}>
                       <img src={up} alt="up" style={{ marginRight: 4 }} />
                       {item.rate}%
@@ -171,20 +178,22 @@ function App() {
                   ) : (
                     <div style={{ color: "#F23985" }}>
                       <img src={down} alt="up" style={{ marginRight: 4 }} />
-                      {item.rate}%
+                      {item?.rate}%
                     </div>
                   )}
                 </div>
               ))}
             </div>
             <div className="recent-wrapper">
-              <div className="recent-wrapper-title">Recent Activities</div>
+              <div className="recent-wrapper-title">
+                {data?.recentActivitiesTitle}
+              </div>
               <table>
                 <tr />
-                {activities.map((item) => (
+                {data?.recentActivities?.map((item) => (
                   <tr className="recent-row">
                     <td className="recent-img">
-                      <img src={item.src} alt="coin" />
+                      <img src={item.icon} alt="coin" />
                     </td>
                     <td className="recent-name">{item.name}</td>
                     <td className="recent-time">{item.time}</td>
@@ -203,7 +212,7 @@ function App() {
               </table>
             </div>
           </div>
-          <div className="footer">© Dashboard, All rights reserved</div>
+          <div className="footer">{data?.footer}</div>
         </div>
       </div>
     </>

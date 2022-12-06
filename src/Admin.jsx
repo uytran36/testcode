@@ -1,220 +1,371 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { Button, Space, Form, Input, message, Upload } from "antd";
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  RiseOutlined,
-  PartitionOutlined,
-  CarryOutOutlined,
-  MoneyCollectOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import {
-  Layout,
-  Menu,
-  theme,
-  Form,
-  Input,
-  Button,
-  Space,
-  Table,
-  Modal,
-  Checkbox,
-} from "antd";
+import "./Admin.css";
 
-const { Header, Sider, Content } = Layout;
+const { TextArea } = Input;
+
+const CustomAvatar = (props) => {
+  return <img src={props.value} />;
+};
 
 const Admin = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [data, setData] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  const routesWatch = Form.useWatch("routes", form);
+  const coinListWatch = Form.useWatch("coinList", form);
+  const recentActivitiesWatch = Form.useWatch("recentActivities", form);
+
+  const propsUpload = {
+    name: "file",
+    action: "https://api.imgbb.com/1/upload",
+    data: (file) => {
+      return { key: "bd76800115deafd3015d107d402acdda", image: file };
+    },
+  };
 
   useEffect(() => {
-    function requestGetData() {
-      fetch(`${import.meta.env.VITE_API_MOCK}/routes`).then((res) => {
-        res.json().then((res) => {
-          setData(res?.data);
-        });
+    async function fetchData() {
+      const result = await fetch(`${import.meta.env.VITE_API_MOCK}/routes`);
+      const dataFetch = await result.json();
+      form.setFieldsValue({
+        routes: dataFetch.data[0].routes,
+        creditScoreRankingTitle: dataFetch.data[0].creditScoreRankingTitle,
+        creditScoreRanking: dataFetch.data[0].creditScoreRanking,
+        creditScoreRankingText: dataFetch.data[0].creditScoreRankingText,
+        creditScoreRankingBtn: dataFetch.data[0].creditScoreRankingBtn,
+        creditScore: dataFetch.data[0].creditScore,
+        coinList: dataFetch.data[0].coinList,
+        recentActivitiesTitle: dataFetch.data[0].recentActivitiesTitle,
+        recentActivities: dataFetch.data[0].recentActivities,
       });
     }
-
-    requestGetData();
+    fetchData();
   }, []);
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const onFinish = async (values) => {
+    console.log(values);
+    const res = await fetch(`${import.meta.env.VITE_API_MOCK}/routes/1`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+    console.log(res);
   };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Icon",
-      dataIndex: "icon",
-      key: "icon",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <a>edit</a>
-          <a>Delete</a>
-        </Space>
-      ),
-    },
-  ];
 
   return (
-    <Layout style={{ height: "100vh" }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={["1"]}
-          items={[
-            {
-              key: "1",
-              icon: <PartitionOutlined />,
-              label: "Routes",
-            },
-            {
-              key: "2",
-              icon: <MoneyCollectOutlined />,
-              label: "Credit Score",
-            },
-            {
-              key: "3",
-              icon: <RiseOutlined />,
-              label: "Coin Rate",
-            },
-            {
-              key: "4",
-              icon: <CarryOutOutlined />,
-              label: "Recent Activities",
-            },
-          ]}
-        />
-      </Sider>
-      <Layout className="site-layout">
-        <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
-        </Header>
-        <Content
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
-          }}
-        >
-          <Button type="primary" onClick={showModal}>
-            Add route
-          </Button>
-          <Table columns={columns} dataSource={data} />
-          <Modal
-            title="Basic Modal"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-          >
-            <Form
-              name="basic"
-              labelCol={{
-                span: 8,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-            >
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your username!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+    <div className="form-wrapper">
+      <Form name="dynamic_form_item" form={form} onFinish={onFinish}>
+        <Form.Item label={<div style={{ fontWeight: 700 }}>Routes</div>} />
 
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your password!",
-                  },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                name="remember"
-                valuePropName="checked"
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
-              >
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-
-              <Form.Item
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
-              >
-                <Button type="primary" htmlType="submit">
-                  Submit
+        <Form.List name="routes">
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map(({ key, name, ...restField }, index) => (
+                <Space
+                  key={key}
+                  style={{
+                    display: "flex",
+                    marginBottom: 8,
+                  }}
+                  align="baseline"
+                >
+                  <Form.Item {...restField} name={[name, "name"]}>
+                    <Input placeholder="Name" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "icon"]}>
+                    <CustomAvatar />
+                  </Form.Item>
+                  <Upload
+                    {...propsUpload}
+                    onChange={(info) => {
+                      if (info.file.status !== "uploading") {
+                        console.log(info.file, info.fileList);
+                      }
+                      if (info.file.status === "done") {
+                        form.setFieldsValue({
+                          routes: routesWatch.map((item, idx) => {
+                            return {
+                              ...item,
+                              icon:
+                                idx === index
+                                  ? info.file.response.data.display_url
+                                  : item.icon,
+                            };
+                          }),
+                        });
+                        message.success(
+                          `${info.file.name} file uploaded successfully`
+                        );
+                      } else if (info.file.status === "error") {
+                        message.error(`${info.file.name} file upload failed.`);
+                      }
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                  </Upload>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  style={{
+                    width: "60%",
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Add field
                 </Button>
+                <Form.ErrorList errors={errors} />
               </Form.Item>
-            </Form>
-          </Modal>
-        </Content>
-      </Layout>
-    </Layout>
+            </>
+          )}
+        </Form.List>
+        <Form.Item
+          label={<div style={{ fontWeight: 700 }}>First card title</div>}
+          name="creditScoreRankingTitle"
+        >
+          <Input placeholder="Title" />
+        </Form.Item>
+        <Form.Item
+          label={<div style={{ fontWeight: 700 }}>Inside card name</div>}
+          name="creditScoreRanking"
+        >
+          <Input placeholder="Name" />
+        </Form.Item>
+        <Form.Item
+          label={<div style={{ fontWeight: 700 }}>Inside card text</div>}
+          name="creditScoreRankingText"
+        >
+          <TextArea rows={4} placeholder="Button text" />
+        </Form.Item>
+        <Form.Item
+          label={<div style={{ fontWeight: 700 }}>Inside card button</div>}
+          name="creditScoreRankingBtn"
+        >
+          <Input placeholder="Button text" />
+        </Form.Item>
+        <Form.Item
+          label={<div style={{ fontWeight: 700 }}>Credit score list</div>}
+        />
+        <Form.List name="creditScore">
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Space
+                  key={key}
+                  style={{
+                    display: "flex",
+                    marginBottom: 8,
+                  }}
+                  align="baseline"
+                >
+                  <Form.Item {...restField} name={[name, "name"]}>
+                    <Input placeholder="Name" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "icon"]}>
+                    <Input placeholder="Icon" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "score"]}>
+                    <Input placeholder="Score" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "status"]}>
+                    <Input placeholder="Status" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  style={{
+                    width: "60%",
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Add field
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+        <Form.Item label={<div style={{ fontWeight: 700 }}>Coin list </div>} />
+
+        <Form.List name="coinList">
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map(({ key, name, ...restField }, index) => (
+                <Space
+                  key={key}
+                  style={{
+                    display: "flex",
+                    marginBottom: 8,
+                  }}
+                  align="baseline"
+                >
+                  <Form.Item {...restField} name={[name, "from"]}>
+                    <Input placeholder="From" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "to"]}>
+                    <Input placeholder="To" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "icon"]}>
+                    <CustomAvatar />
+                  </Form.Item>
+                  <Upload
+                    {...propsUpload}
+                    onChange={(info) => {
+                      if (info.file.status !== "uploading") {
+                        console.log(info.file, info.fileList);
+                      }
+                      if (info.file.status === "done") {
+                        form.setFieldsValue({
+                          coinList: coinListWatch.map((item, idx) => {
+                            return {
+                              ...item,
+                              icon:
+                                idx === index
+                                  ? info.file.response.data.display_url
+                                  : item.icon,
+                            };
+                          }),
+                        });
+                        message.success(
+                          `${info.file.name} file uploaded successfully`
+                        );
+                      } else if (info.file.status === "error") {
+                        message.error(`${info.file.name} file upload failed.`);
+                      }
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                  </Upload>
+                  <Form.Item {...restField} name={[name, "value"]}>
+                    <Input placeholder="Value" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "rate"]}>
+                    <Input placeholder="Rate" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "raise"]}>
+                    <Input placeholder="Raising" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  style={{
+                    width: "60%",
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Add field
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+        <Form.Item
+          label={<div style={{ fontWeight: 700 }}>Table title</div>}
+          name="recentActivitiesTitle"
+        >
+          <Input placeholder="Title table" />
+        </Form.Item>
+
+        <Form.Item label={<div style={{ fontWeight: 700 }}>Table data</div>} />
+        <Form.List name="recentActivities">
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map(({ key, name, ...restField }, index) => (
+                <Space
+                  key={key}
+                  style={{
+                    display: "flex",
+                    marginBottom: 8,
+                  }}
+                  align="baseline"
+                >
+                  <Form.Item {...restField} name={[name, "name"]}>
+                    <Input placeholder="Name" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "icon"]}>
+                    <CustomAvatar />
+                  </Form.Item>
+                  <Upload
+                    {...propsUpload}
+                    onChange={(info) => {
+                      if (info.file.status !== "uploading") {
+                        console.log(info.file, info.fileList);
+                      }
+                      if (info.file.status === "done") {
+                        form.setFieldsValue({
+                          recentActivities: recentActivitiesWatch.map((item, idx) => {
+                            return {
+                              ...item,
+                              icon:
+                                idx === index
+                                  ? info.file.response.data.display_url
+                                  : item.icon,
+                            };
+                          }),
+                        });
+                        message.success(
+                          `${info.file.name} file uploaded successfully`
+                        );
+                      } else if (info.file.status === "error") {
+                        message.error(`${info.file.name} file upload failed.`);
+                      }
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                  </Upload>
+                  <Form.Item {...restField} name={[name, "time"]}>
+                    <Input placeholder="Time" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "status"]}>
+                    <Input placeholder="Status" />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "value"]}>
+                    <Input placeholder="Value" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  style={{
+                    width: "60%",
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Add field
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 export default Admin;
